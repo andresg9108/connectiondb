@@ -1,10 +1,10 @@
 <?php
 
-namespace connection;
+namespace andresg9108\connectiondb;
 
 use \Exception;
 use \mysqli;
-use connection\constantConnection;
+use andresg9108\connectiondb\constantConnection;
 
 class connection{
 
@@ -110,7 +110,7 @@ class connection{
 	private function connectMySQL(){
 		$this->oConnection = @new mysqli($this->sServer, $this->sUser, $this->sPassword, $this->sDatabase);
 	    if($this->oConnection->connect_error){
-	    	$sMessageErr = constantConnection::getConstant('FAIL_CONNECTION_FAILURE_DB');
+	    	$sMessageErr = constantConnection::FAIL_CONNECTION_FAILURE_DB;
 	    	throw new Exception($sMessageErr.' '.$this->oConnection->connect_error);
 	    }
 
@@ -122,11 +122,11 @@ class connection{
 	*/
 	private function runMySQL($sQuery){
 		if($this->oConnection->connect_error){
-			$sMessageErr = constantConnection::getConstant('FAIL_CONNECTION_FAILURE_DB');
+			$sMessageErr = constantConnection::FAIL_CONNECTION_FAILURE_DB;
 	    	throw new Exception($sMessageErr.' '.$this->oConnection->connect_error);
 		}
 	    if(!@$this->oConnection->query($sQuery)){
-	    	$sMessageErr = constantConnection::getConstant('ERROR_IN_THE_QUERY');
+	    	$sMessageErr = constantConnection::ERROR_IN_THE_QUERY;
 	    	throw new Exception($sMessageErr.' '.$sQuery);
 	    }
 	}
@@ -135,12 +135,12 @@ class connection{
 	*/
 	private function queryRowMySQL($sQuery, $aParameters){
 		if($this->oConnection->connect_error){
-			$sMessageErr = constantConnection::getConstant('FAIL_CONNECTION_FAILURE_DB');
+			$sMessageErr = constantConnection::FAIL_CONNECTION_FAILURE_DB;
 	    	throw new Exception($sMessageErr.' '.$this->oConnection->connect_error);
 		}
 	    $oQuery = @$this->oConnection->query($sQuery);
 	    if(!$oQuery){
-	    	$sMessageErr = constantConnection::getConstant('ERROR_IN_THE_QUERY');
+	    	$sMessageErr = constantConnection::ERROR_IN_THE_QUERY;
 	    	throw new Exception($sMessageErr.' '.$sQuery);
 	    }
 
@@ -162,12 +162,12 @@ class connection{
 	*/
 	private function queryArrayMySQL($sQuery, $aParameters){
 		if($this->oConnection->connect_error){
-			$sMessageErr = constantConnection::getConstant('FAIL_CONNECTION_FAILURE_DB');
+			$sMessageErr = constantConnection::FAIL_CONNECTION_FAILURE_DB;
 	    	throw new Exception($sMessageErr.' '.$this->oConnection->connect_error);
 		}
 	    $oQuery = @$this->oConnection->query($sQuery);
 	    if(!$oQuery){
-	    	$sMessageErr = constantConnection::getConstant('ERROR_IN_THE_QUERY');
+	    	$sMessageErr = constantConnection::ERROR_IN_THE_QUERY;
 	    	throw new Exception($sMessageErr.' '.$sQuery);
 	    }
 
