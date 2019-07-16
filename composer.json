@@ -1,0 +1,10 @@
+{
+    "name": "andresg9108/connectiondb",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Andres Gonzalez"
+        }
+    ],
+    "require": {}
+}
