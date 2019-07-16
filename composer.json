@@ -1,10 +1,14 @@
 {
     "name": "andresg9108/connectiondb",
     "license": "MIT",
+    "version": "0.1.0",
     "authors": [
         {
             "name": "Andres Gonzalez"
         }
     ],
-    "require": {}
+    "require": {},
+    "autoload": {
+        "psr-0": {"": "connection/"}
+    }
 }
