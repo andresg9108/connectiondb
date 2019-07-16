@@ -1,7 +1,7 @@
 {
     "name": "andresg9108/connectiondb",
     "license": "MIT",
-    "version": "0.1.1",
+    "version": "0.1.2",
     "authors": [
         {
             "name": "Andres Gonzalez"
@@ -9,6 +9,9 @@
     ],
     "require": {},
     "autoload": {
-        "psr-0": {"": "connection/"}
+        "files": [
+            "connection/connection.php",
+            "connection/constantConnection.php"
+        ]
     }
 }
