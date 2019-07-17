@@ -39,11 +39,24 @@ try {
 		'server' => 'localhost',
 		'user' => 'root',
 		'password' => '',
-		'database' => 'my_database'
+		'database' => 'example'
 	];
 	$oConnection = (object)$aConnection;
 	
 	$oPDO = new PDO('mysql:host='.$oConnection->server.';dbname='.$oConnection->database, $oConnection->user, $oConnection->password);
+
+	$oQuery = $oPDO->prepare("INSERT INTO `example`(`name`, `last`, `phone`) VALUES ('Felipe', 'Florez', '123');");
+	$oQuery->execute();
+
+	$aQuery = $oPDO->query("SELECT * FROM `example`;");
+	foreach ($aQuery as $aRow) {
+		$oRow = (object)$aRow;
+		echo $oRow->name." - ";
+		echo $oRow->last." - ";
+		echo $oRow->phone;
+		echo "<br /><br />";
+	}
+
 	$oPDO = null;
 } catch (Exception $e) {
 	echo "Error: ".$e->getMessage();
