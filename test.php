@@ -9,62 +9,52 @@ require_once __DIRMAIN__.'connection/connection.php';
 
 use andresg9108\connectiondb\connection;
 
-// MySQL with MySQLi
-/*try {
+try {
 	$aConnection = [
 		'motor' => 'mysql',
 		'server' => 'localhost',
 		'user' => 'root',
 		'password' => '',
-		'database' => 'my_database'
+		'database' => 'example'
 	];
-
 	$oAConnection = (object)$aConnection;
 
 	$oConnection = connection::getInstance($oAConnection);
 	$oConnection->connect();
 
-	$oConnection->queryArray("SELECT * FROM user;", ['field1', 'field2', 'field3', 'field4']);
+	//Test run
+	$oConnection->run("INSERT INTO `example`(`name`, `last`, `phone`) VALUES ('Andres', 'Gonzalez', '123');");
+	$oResponse = $oConnection->getIDInsert();
+	echo "Test run:<br />";
+	echo "ID: ".json_encode($oConnection->getIDInsert());
+	echo "<br /><br />";
+
+	// Test queryArray
+	$oConnection->queryArray("SELECT * FROM example;", ['name', 'last', 'phone']);
 	$aResponse = $oConnection->getQuery();
 
-	echo json_encode($aResponse);
-} catch (Exception $e) {
-	echo "Error: ".$e->getMessage();
-}*/
-
-// MySQL with PDO
-try {
-	$aConnection = [
-		'motor' => 'mysqlpdo',
-		'server' => 'localhost',
-		'user' => 'root',
-		'password' => '',
-		'database' => 'example'
-	];
-	$oConnection = (object)$aConnection;
-	
-	$oPDO = new PDO('mysql:host='.$oConnection->server.';dbname='.$oConnection->database, $oConnection->user, $oConnection->password);
-
-	$oPDO->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-
-	$oPDO->beginTransaction();
-
-	$oPDO->exec("INSERT INTO `example`(`name`, `last`, `phone`) VALUES ('Felipe', 'Florez', '123');");
-
-	$aQuery = $oPDO->query("SELECT * FROM `example`;");
-	foreach ($aQuery as $aRow) {
-		$oRow = (object)$aRow;
-		echo $oRow->name." - ";
-		echo $oRow->last." - ";
-		echo $oRow->phone;
-		echo "<br /><br />";
+	echo "Test queryArray:<br />";
+	foreach ($aResponse as $i => $v) {
+		echo $v->name.' - ';
+		echo $v->last.' - ';
+		echo $v->phone.' - ';
+		echo "<br />";
 	}
+	echo "<br /><br />";
 
-	$oPDO->commit();
+	// Test queryRow
+	$oConnection->queryRow("SELECT * FROM example;", ['name', 'last', 'phone']);
+	$oResponse = $oConnection->getQuery();
+	echo "Name: ".$oResponse->name."<br />";
+	echo "Last Name: ".$oResponse->last."<br />";
+	echo "Phone: ".$oResponse->phone."<br />";
+	echo "<br /><br />";
 
-	$oPDO = null;
+	$oConnection->commit();
+	$oConnection->close();
 } catch (Exception $e) {
-	if(!empty($oPDO)){ $oPDO->rollBack(); }
-	$oPDO = null;
+	$oConnection->rollback();
+	$oConnection->close();
+
 	echo "Error: ".$e->getMessage();
 }

@@ -4,6 +4,7 @@ namespace andresg9108\connectiondb;
 
 use \Exception;
 use \mysqli;
+use \PDO;
 use andresg9108\connectiondb\constantConnection;
 
 class connection{
@@ -44,61 +45,86 @@ class connection{
 	  /*
 	  */
 	  public function connect(){
-	    if($this->sMotor == "mysql")
+	    if($this->sMotor == "mysql"){
 	    	$this->connectMySQL();
+	    }else if($this->sMotor == "mysqlpdo"){
+	    	$this->connectMySQLPDO();
+	    }
 	  }
 
 	  /*
 	  */
 	  public function run($sQuery){
-	    if($this->sMotor == "mysql")
+	    if($this->sMotor == "mysql"){
 	    	$this->runMySQL($sQuery);
+	    }else if($this->sMotor == "mysqlpdo"){
+	    	$this->runMySQLPDO($sQuery);
+	    }
 	  }
 
 	  /*
 	  */
-	  public function queryArray($sQuery, $aParameters){
+	  public function queryArray($sQuery, $aParameters = []){
 	  	$this->query = [];
 	  	
-	    if($this->sMotor == "mysql")
+	    if($this->sMotor == "mysql"){
 	    	$this->queryArrayMySQL($sQuery, $aParameters);
+	    }else if($this->sMotor == "mysqlpdo"){
+	    	$this->queryArrayMySQLPDO($sQuery);
+	    }
+	    	
 	  }
 
 	  /*
 	  */
-	  public function queryRow($sQuery, $aParameters){
+	  public function queryRow($sQuery, $aParameters = []){
 	  	$this->query = [];
 	  	
-	    if($this->sMotor == "mysql")
+	    if($this->sMotor == "mysql"){
 	    	$this->queryRowMySQL($sQuery, $aParameters);
+	    }else if($this->sMotor == "mysqlpdo"){
+	    	$this->queryRowMySQLPDO($sQuery);
+	    }
 	  }
 
 	  /*
 	  */
 	  public function commit(){
-	      if($this->sMotor == "mysql")
-	          $this->commitMySQL();
+	      if($this->sMotor == "mysql"){
+	      	$this->commitMySQL();
+	      }else if($this->sMotor == "mysqlpdo"){
+	      	$this->commitMySQLPDO();
+	      }
 	  }
 
 	  /*
 	  */
 	  public function rollback(){
-	      if($this->sMotor == "mysql")
-	         $this->rollbackMySQL();
+	      if($this->sMotor == "mysql"){
+	      	$this->rollbackMySQL();
+	      }else if($this->sMotor == "mysqlpdo"){
+	      	$this->rollbackMySQLPDO();
+	      }
 	  }
 
 	  /*
 	  */
 	  public function close(){
-	      if($this->sMotor == "mysql")
-	          $this->closeMySQL();
+	      if($this->sMotor == "mysql"){
+	      	$this->closeMySQL();
+	      }else if($this->sMotor == "mysqlpdo"){
+	      	$this->closeMySQLPDO();
+	      }
 	  }
 	  
 	  /*
 	  */
 	  public function getIDInsert(){
-	  	if($this->sMotor == "mysql")
+	  	if($this->sMotor == "mysql"){
 	  		return $this->getIDInsertMySQL();
+	  	}else if($this->sMotor == "mysqlpdo"){
+	  		return $this->getIDInsertMySQLPDO();
+	  	}
 
 	  	return null;
 	  }
@@ -215,6 +241,112 @@ class connection{
 	private function getIDInsertMySQL(){
 		if(!$this->oConnection->connect_error)
 			return @$this->oConnection->insert_id;
+	}
+
+	/*MySQL PDO*/
+	/*
+	*/
+	private function connectMySQLPDO(){
+	    $this->oConnection = new PDO('mysql:host='.$this->sServer.';dbname='.$this->sDatabase, $this->sUser, $this->sPassword);
+
+		$this->oConnection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+		$this->oConnection->beginTransaction();
+	}
+
+	/*
+	*/
+	private function runMySQLPDO($sQuery){
+		$this->runPDO($sQuery);
+	}
+
+	/*
+	*/
+	private function queryArrayMySQLPDO($sQuery){
+		$this->queryArrayPDO($sQuery);
+	}
+
+	/*
+	*/
+	private function queryRowMySQLPDO($sQuery){
+		$this->queryRowPDO($sQuery);
+	}
+
+	/*
+	*/
+	private function commitMySQLPDO(){
+		$this->commitPDO();
+	}
+
+	/*
+	*/
+	private function rollbackMySQLPDO(){
+		$this->rollbackPDO();
+	}
+
+	/*
+	*/
+	private function closeMySQLPDO(){
+		$this->closePDO();
+	}
+
+	/*
+	*/
+	private function getIDInsertMySQLPDO(){
+		return $this->getIDInsertPDO();
+	}
+
+	/*PDO*/
+	/*
+	*/
+	private function runPDO($sQuery){
+		$this->oConnection->exec($sQuery);
+	}
+	
+	/*
+	*/
+	private function queryArrayPDO($sQuery){
+		$oQuery = $this->oConnection->query($sQuery);
+
+		$aResponse = [];
+		foreach ($oQuery as $aRow) {
+			$oRow = (object)$aRow;
+			$aResponse[] = $oRow;
+		}
+
+		$this->query = $aResponse;
+	}
+
+	/*
+	*/
+	private function queryRowPDO($sQuery){
+		$oQuery = $this->oConnection->query($sQuery);
+		$this->query = (object)$oQuery->fetch();
+	}
+
+	/*
+	*/
+	private function commitPDO(){
+		if(!empty($this->oConnection)){
+			$this->oConnection->commit();
+		}
+	}
+
+	private function rollbackPDO(){
+		if(!empty($this->oConnection)){
+			$this->oConnection->rollback();
+		}
+	}
+
+	/*
+	*/
+	private function closePDO(){
+		$this->oConnection = null;
+	}
+
+	/*
+	*/
+	private function getIDInsertPDO(){
+		return null;
 	}
 
 }
