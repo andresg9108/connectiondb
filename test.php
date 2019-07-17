@@ -41,6 +41,7 @@ try {
 
 	echo "Test queryArray:<br />";
 	foreach ($aResponse as $i => $v) {
+		echo $v->id.' - ';
 		echo $v->name.' - ';
 		echo $v->last.' - ';
 		echo $v->phone.' - ';
@@ -51,6 +52,7 @@ try {
 	// Test queryRow
 	$oConnection->queryRow("SELECT * FROM example;", ['id', 'name', 'last', 'phone']);
 	$oResponse = $oConnection->getQuery();
+	echo "ID: ".$oResponse->id."<br />";
 	echo "Name: ".$oResponse->name."<br />";
 	echo "Last Name: ".$oResponse->last."<br />";
 	echo "Phone: ".$oResponse->phone."<br />";
