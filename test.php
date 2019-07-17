@@ -15,18 +15,54 @@ try {
 		'server' => 'localhost',
 		'user' => 'root',
 		'password' => '',
-		'database' => 'my_database'
+		'database' => 'example'
 	];
-
 	$oAConnection = (object)$aConnection;
 
 	$oConnection = connection::getInstance($oAConnection);
 	$oConnection->connect();
 
-	$oConnection->queryArray("SELECT * FROM user;", ['field1', 'field2', 'field3', 'field4']);
+	//Test run
+	$oConnection->run("INSERT INTO `example`(`name`, `last`, `phone`) VALUES ('Daniel', 'Velez', '456');");
+	$oResponse = $oConnection->getIDInsert();
+	echo "Test run:<br />";
+	echo "ID: ".json_encode($oConnection->getIDInsert());
+	echo "<br /><br />";
+
+	$oConnection->run("INSERT INTO `example2`(`id2`, `name`, `last`, `phone`) VALUES (1, 'Daniel', 'Velez', '456');");
+	$oResponse = $oConnection->getIDInsert();
+	echo "Test run:<br />";
+	echo "ID: ".json_encode($oConnection->getIDInsert());
+	echo "<br /><br />";
+
+	// Test queryArray
+	$oConnection->queryArray("SELECT * FROM example;", ['id', 'name', 'last', 'phone']);
 	$aResponse = $oConnection->getQuery();
 
-	echo json_encode($aResponse);
+	echo "Test queryArray:<br />";
+	foreach ($aResponse as $i => $v) {
+		echo $v->id.' - ';
+		echo $v->name.' - ';
+		echo $v->last.' - ';
+		echo $v->phone.' - ';
+		echo "<br />";
+	}
+	echo "<br /><br />";
+
+	// Test queryRow
+	$oConnection->queryRow("SELECT * FROM example;", ['id', 'name', 'last', 'phone']);
+	$oResponse = $oConnection->getQuery();
+	echo "ID: ".$oResponse->id."<br />";
+	echo "Name: ".$oResponse->name."<br />";
+	echo "Last Name: ".$oResponse->last."<br />";
+	echo "Phone: ".$oResponse->phone."<br />";
+	echo "<br /><br />";
+
+	$oConnection->commit();
+	$oConnection->close();
 } catch (Exception $e) {
+	$oConnection->rollback();
+	$oConnection->close();
+
 	echo "Error: ".$e->getMessage();
 }
