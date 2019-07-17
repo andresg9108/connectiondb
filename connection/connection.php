@@ -346,7 +346,7 @@ class connection{
 	/*
 	*/
 	private function getIDInsertPDO(){
-		return null;
+		return $this->oConnection->lastInsertId();
 	}
 
 }

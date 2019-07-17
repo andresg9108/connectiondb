@@ -23,14 +23,20 @@ try {
 	$oConnection->connect();
 
 	//Test run
-	$oConnection->run("INSERT INTO `example`(`name`, `last`, `phone`) VALUES ('Andres', 'Gonzalez', '123');");
+	$oConnection->run("INSERT INTO `example`(`name`, `last`, `phone`) VALUES ('Daniel', 'Velez', '456');");
+	$oResponse = $oConnection->getIDInsert();
+	echo "Test run:<br />";
+	echo "ID: ".json_encode($oConnection->getIDInsert());
+	echo "<br /><br />";
+
+	$oConnection->run("INSERT INTO `example2`(`id2`, `name`, `last`, `phone`) VALUES (1, 'Daniel', 'Velez', '456');");
 	$oResponse = $oConnection->getIDInsert();
 	echo "Test run:<br />";
 	echo "ID: ".json_encode($oConnection->getIDInsert());
 	echo "<br /><br />";
 
 	// Test queryArray
-	$oConnection->queryArray("SELECT * FROM example;", ['name', 'last', 'phone']);
+	$oConnection->queryArray("SELECT * FROM example;", ['id', 'name', 'last', 'phone']);
 	$aResponse = $oConnection->getQuery();
 
 	echo "Test queryArray:<br />";
@@ -43,7 +49,7 @@ try {
 	echo "<br /><br />";
 
 	// Test queryRow
-	$oConnection->queryRow("SELECT * FROM example;", ['name', 'last', 'phone']);
+	$oConnection->queryRow("SELECT * FROM example;", ['id', 'name', 'last', 'phone']);
 	$oResponse = $oConnection->getQuery();
 	echo "Name: ".$oResponse->name."<br />";
 	echo "Last Name: ".$oResponse->last."<br />";
