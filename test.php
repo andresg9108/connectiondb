@@ -9,7 +9,8 @@ require_once __DIRMAIN__.'connection/connection.php';
 
 use andresg9108\connectiondb\connection;
 
-try {
+// MySQL with MySQLi
+/*try {
 	$aConnection = [
 		'motor' => 'mysql',
 		'server' => 'localhost',
@@ -28,5 +29,24 @@ try {
 
 	echo json_encode($aResponse);
 } catch (Exception $e) {
+	echo "Error: ".$e->getMessage();
+}*/
+
+// MySQL with PDO
+try {
+	$aConnection = [
+		'motor' => 'mysqlpdo',
+		'server' => 'localhost',
+		'user' => 'root',
+		'password' => '',
+		'database' => 'my_database'
+	];
+	$oConnection = (object)$aConnection;
+	
+	$oPDO = new PDO('mysql:host='.$oConnection->server.';dbname='.$oConnection->database, $oConnection->user, $oConnection->password);
+	$oPDO = null;
+} catch (Exception $e) {
+	echo "Error: ".$e->getMessage();
+} catch (PDOException $e) {
 	echo "Error: ".$e->getMessage();
 }
