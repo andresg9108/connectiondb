@@ -45,8 +45,11 @@ try {
 	
 	$oPDO = new PDO('mysql:host='.$oConnection->server.';dbname='.$oConnection->database, $oConnection->user, $oConnection->password);
 
-	$oQuery = $oPDO->prepare("INSERT INTO `example`(`name`, `last`, `phone`) VALUES ('Felipe', 'Florez', '123');");
-	$oQuery->execute();
+	$oPDO->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+	$oPDO->beginTransaction();
+
+	$oPDO->exec("INSERT INTO `example`(`name`, `last`, `phone`) VALUES ('Felipe', 'Florez', '123');");
 
 	$aQuery = $oPDO->query("SELECT * FROM `example`;");
 	foreach ($aQuery as $aRow) {
@@ -57,9 +60,11 @@ try {
 		echo "<br /><br />";
 	}
 
+	$oPDO->commit();
+
 	$oPDO = null;
 } catch (Exception $e) {
-	echo "Error: ".$e->getMessage();
-} catch (PDOException $e) {
+	if(!empty($oPDO)){ $oPDO->rollBack(); }
+	$oPDO = null;
 	echo "Error: ".$e->getMessage();
 }
