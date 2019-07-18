@@ -314,6 +314,7 @@ class connection{
 		}
 
 		$this->query = $aResponse;
+		$oQuery = null;
 	}
 
 	/*
@@ -321,6 +322,7 @@ class connection{
 	private function queryRowPDO($sQuery){
 		$oQuery = $this->oConnection->query($sQuery);
 		$this->query = (object)$oQuery->fetch();
+		$oQuery = null;
 	}
 
 	/*
@@ -341,6 +343,7 @@ class connection{
 	*/
 	private function closePDO(){
 		$this->oConnection = null;
+		$this->query = null;
 	}
 
 	/*
