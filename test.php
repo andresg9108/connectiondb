@@ -17,7 +17,7 @@ try {
 		'user' => 'root', 
 		'password' => '', 
 		'database' => 'example', 
-		'sqlitefile' => 'db.sqlite'
+		'sqlitepath' => 'E:/sql/db.sqlite'
 	];
 	$oAConnection = (object)$aConnection;
 
