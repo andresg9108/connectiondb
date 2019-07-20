@@ -18,6 +18,7 @@ class connection{
 	private $sUser;
 	private $sPassword;
 	private $sDatabase;
+	private $sSQLiteFile;
 	private $query;
 
 	// Properties
@@ -32,6 +33,7 @@ class connection{
 		$this->sUser = (isset($oConnection->user)) ? $oConnection->user : '';
 		$this->sPassword = (isset($oConnection->password)) ? $oConnection->password : '';
 		$this->sDatabase = (isset($oConnection->database)) ? $oConnection->database : '';
+		$this->sSQLiteFile = (isset($oConnection->sqlitefile)) ? $oConnection->sqlitefile : '';
 		$this->query = [];
 	}
 
@@ -260,7 +262,7 @@ class connection{
 	/*
 	*/
 	private function connectSQLitePDO(){
-		$sConnection = 'sqlite:db.sqlite';
+		$sConnection = 'sqlite:'.$this->sSQLiteFile;
 	    
 	    $this->connectPDO($sConnection);
 	}
