@@ -11,11 +11,12 @@ use andresg9108\connectiondb\connection;
 
 try {
 	$aConnection = [
-		'motor' => 'mysql',
-		'server' => 'localhost',
-		'user' => 'root',
-		'password' => '',
-		'database' => 'example'
+		'motor' => 'mysql', 
+		'server' => 'localhost', 
+		'charset' => 'utf8', 
+		'user' => 'root', 
+		'password' => '', 
+		'database' => 'example' 
 	];
 	$oAConnection = (object)$aConnection;
 

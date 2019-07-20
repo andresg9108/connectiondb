@@ -14,6 +14,7 @@ class connection{
 	private $oConnection;
 	private $sMotor;
 	private $sServer;
+	private $sCharset;
 	private $sUser;
 	private $sPassword;
 	private $sDatabase;
@@ -27,6 +28,7 @@ class connection{
 	{
 		$this->sMotor = (isset($oConnection->motor)) ? $oConnection->motor : '';
 		$this->sServer = (isset($oConnection->server)) ? $oConnection->server : '';
+		$this->sCharset = (isset($oConnection->charset)) ? $oConnection->charset : '';
 		$this->sUser = (isset($oConnection->user)) ? $oConnection->user : '';
 		$this->sPassword = (isset($oConnection->password)) ? $oConnection->password : '';
 		$this->sDatabase = (isset($oConnection->database)) ? $oConnection->database : '';
@@ -140,7 +142,7 @@ class connection{
 	    	throw new Exception($sMessageErr.' '.$this->oConnection->connect_error);
 	    }
 
-	    $this->oConnection->set_charset('utf8');
+	    $this->oConnection->set_charset($this->sCharset);
 	    $this->oConnection->autocommit(FALSE);
 	}
 
@@ -247,7 +249,8 @@ class connection{
 	/*
 	*/
 	private function connectMySQLPDO(){
-	    $this->oConnection = new PDO('mysql:host='.$this->sServer.';dbname='.$this->sDatabase, $this->sUser, $this->sPassword);
+		$sConnection = 'mysql:host='.$this->sServer.';dbname='.$this->sDatabase.';charset='.$this->sCharset;
+	    $this->oConnection = new PDO($sConnection, $this->sUser, $this->sPassword);
 
 		$this->oConnection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 		$this->oConnection->beginTransaction();
