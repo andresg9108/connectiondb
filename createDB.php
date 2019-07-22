@@ -10,10 +10,15 @@ require_once __DIRMAIN__.'connection/connection.php';
 use andresg9108\connectiondb\connection;
 
 try {
-	$sFile = getFileContents('SQLite.sql');
+	$sFile = getFileContents('SQL.sql');
 
 	$aConnection = [
-		'motor' => 'sqlitepdo', 
+		'motor' => 'mysql', // mysql OR mysqlpdo OR sqlitepdo
+		'server' => 'localhost', 
+		'charset' => 'utf8', 
+		'user' => 'root', 
+		'password' => '', 
+		'database' => 'example', 
 		'sqlitepath' => 'E:/sql/db.sqlite'
 	];
 	$oAConnection = (object)$aConnection;
@@ -21,7 +26,7 @@ try {
 	$oConnection = connection::getInstance($oAConnection);
 	$oConnection->connect();
 
-	$oConnection->run($sFile);
+	$oConnection->multiRun($sFile);
 
 	$oConnection->commit();
 	$oConnection->close();
@@ -34,8 +39,8 @@ try {
 	echo "Error: ".$e->getMessage();
 }
 
-function getFileContents($sFileName){
-	$oFile = fopen($sFileName, "r");
+function getFileContents($sFilePath){
+	$oFile = fopen($sFilePath, "r");
 
 	$sFile = '';
 	while (!feof($oFile)){

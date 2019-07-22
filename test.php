@@ -11,7 +11,7 @@ use andresg9108\connectiondb\connection;
 
 try {
 	$aConnection = [
-		'motor' => 'sqlitepdo', // mysql OR mysqlpdo OR sqlitepdo
+		'motor' => 'mysql', // mysql OR mysqlpdo OR sqlitepdo
 		'server' => 'localhost', 
 		'charset' => 'utf8', 
 		'user' => 'root', 

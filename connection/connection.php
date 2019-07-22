@@ -70,6 +70,16 @@ class connection{
 
 	  /*
 	  */
+	  public function multiRun($sQuery){
+	  	if($this->sMotor == "mysql"){
+	    	$this->multiRunMySQL($sQuery);
+	    }else{
+	    	$this->runPDO($sQuery);
+	    }
+	  }
+
+	  /*
+	  */
 	  public function queryArray($sQuery, $aParameters = []){
 	  	$this->query = [];
 	  	
@@ -158,6 +168,19 @@ class connection{
 	    	throw new Exception($sMessageErr.' '.$this->oConnection->connect_error);
 		}
 	    if(!@$this->oConnection->query($sQuery)){
+	    	$sMessageErr = constantConnection::ERROR_IN_THE_QUERY;
+	    	throw new Exception($sMessageErr.' '.$sQuery);
+	    }
+	}
+
+	/*
+	*/
+	private function multiRunMySQL($sQuery){
+		if($this->oConnection->connect_error){
+			$sMessageErr = constantConnection::FAIL_CONNECTION_FAILURE_DB;
+	    	throw new Exception($sMessageErr.' '.$this->oConnection->connect_error);
+		}
+	    if(!@$this->oConnection->multi_query($sQuery)){
 	    	$sMessageErr = constantConnection::ERROR_IN_THE_QUERY;
 	    	throw new Exception($sMessageErr.' '.$sQuery);
 	    }
