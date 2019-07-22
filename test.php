@@ -11,12 +11,13 @@ use andresg9108\connectiondb\connection;
 
 try {
 	$aConnection = [
-		'motor' => 'mysql', 
+		'motor' => 'mysql', // mysql OR mysqlpdo OR sqlitepdo
 		'server' => 'localhost', 
 		'charset' => 'utf8', 
 		'user' => 'root', 
 		'password' => '', 
-		'database' => 'example' 
+		'database' => 'example', 
+		'sqlitepath' => 'E:/sql/db.sqlite'
 	];
 	$oAConnection = (object)$aConnection;
 
@@ -24,7 +25,7 @@ try {
 	$oConnection->connect();
 
 	//Test run
-	$oConnection->run("INSERT INTO `example`(`name`, `last`, `phone`) VALUES ('Daniel', 'Velez', '456');");
+	$oConnection->run("INSERT INTO `example`(`name`, `last`, `phone`) VALUES ('Example', 'Example', '123');");
 	$oResponse = $oConnection->getIDInsert();
 	echo "Test run:<br />";
 	echo "ID: ".json_encode($oConnection->getIDInsert());

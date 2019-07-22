@@ -18,6 +18,7 @@ class connection{
 	private $sUser;
 	private $sPassword;
 	private $sDatabase;
+	private $sSQLitePath;
 	private $query;
 
 	// Properties
@@ -32,6 +33,7 @@ class connection{
 		$this->sUser = (isset($oConnection->user)) ? $oConnection->user : '';
 		$this->sPassword = (isset($oConnection->password)) ? $oConnection->password : '';
 		$this->sDatabase = (isset($oConnection->database)) ? $oConnection->database : '';
+		$this->sSQLitePath = (isset($oConnection->sqlitepath)) ? $oConnection->sqlitepath : '';
 		$this->query = [];
 	}
 
@@ -51,6 +53,8 @@ class connection{
 	    	$this->connectMySQL();
 	    }else if($this->sMotor == "mysqlpdo"){
 	    	$this->connectMySQLPDO();
+	    }else if($this->sMotor == "sqlitepdo"){
+	    	$this->connectSQLitePDO();
 	    }
 	  }
 
@@ -59,8 +63,18 @@ class connection{
 	  public function run($sQuery){
 	    if($this->sMotor == "mysql"){
 	    	$this->runMySQL($sQuery);
-	    }else if($this->sMotor == "mysqlpdo"){
-	    	$this->runMySQLPDO($sQuery);
+	    }else{
+	    	$this->runPDO($sQuery);
+	    }
+	  }
+
+	  /*
+	  */
+	  public function multiRun($sQuery){
+	  	if($this->sMotor == "mysql"){
+	    	$this->multiRunMySQL($sQuery);
+	    }else{
+	    	$this->runPDO($sQuery);
 	    }
 	  }
 
@@ -71,8 +85,8 @@ class connection{
 	  	
 	    if($this->sMotor == "mysql"){
 	    	$this->queryArrayMySQL($sQuery, $aParameters);
-	    }else if($this->sMotor == "mysqlpdo"){
-	    	$this->queryArrayMySQLPDO($sQuery);
+	    }else{
+	    	$this->queryArrayPDO($sQuery);
 	    }
 	    	
 	  }
@@ -84,8 +98,8 @@ class connection{
 	  	
 	    if($this->sMotor == "mysql"){
 	    	$this->queryRowMySQL($sQuery, $aParameters);
-	    }else if($this->sMotor == "mysqlpdo"){
-	    	$this->queryRowMySQLPDO($sQuery);
+	    }else{
+	    	$this->queryRowPDO($sQuery);
 	    }
 	  }
 
@@ -94,8 +108,8 @@ class connection{
 	  public function commit(){
 	      if($this->sMotor == "mysql"){
 	      	$this->commitMySQL();
-	      }else if($this->sMotor == "mysqlpdo"){
-	      	$this->commitMySQLPDO();
+	      }else{
+	      	$this->commitPDO();
 	      }
 	  }
 
@@ -104,8 +118,8 @@ class connection{
 	  public function rollback(){
 	      if($this->sMotor == "mysql"){
 	      	$this->rollbackMySQL();
-	      }else if($this->sMotor == "mysqlpdo"){
-	      	$this->rollbackMySQLPDO();
+	      }else{
+	      	$this->rollbackPDO();
 	      }
 	  }
 
@@ -114,8 +128,8 @@ class connection{
 	  public function close(){
 	      if($this->sMotor == "mysql"){
 	      	$this->closeMySQL();
-	      }else if($this->sMotor == "mysqlpdo"){
-	      	$this->closeMySQLPDO();
+	      }else{
+	      	$this->closePDO();
 	      }
 	  }
 	  
@@ -124,8 +138,8 @@ class connection{
 	  public function getIDInsert(){
 	  	if($this->sMotor == "mysql"){
 	  		return $this->getIDInsertMySQL();
-	  	}else if($this->sMotor == "mysqlpdo"){
-	  		return $this->getIDInsertMySQLPDO();
+	  	}else{
+	  		return $this->getIDInsertPDO();
 	  	}
 
 	  	return null;
@@ -154,6 +168,19 @@ class connection{
 	    	throw new Exception($sMessageErr.' '.$this->oConnection->connect_error);
 		}
 	    if(!@$this->oConnection->query($sQuery)){
+	    	$sMessageErr = constantConnection::ERROR_IN_THE_QUERY;
+	    	throw new Exception($sMessageErr.' '.$sQuery);
+	    }
+	}
+
+	/*
+	*/
+	private function multiRunMySQL($sQuery){
+		if($this->oConnection->connect_error){
+			$sMessageErr = constantConnection::FAIL_CONNECTION_FAILURE_DB;
+	    	throw new Exception($sMessageErr.' '.$this->oConnection->connect_error);
+		}
+	    if(!@$this->oConnection->multi_query($sQuery)){
 	    	$sMessageErr = constantConnection::ERROR_IN_THE_QUERY;
 	    	throw new Exception($sMessageErr.' '.$sQuery);
 	    }
@@ -250,55 +277,29 @@ class connection{
 	*/
 	private function connectMySQLPDO(){
 		$sConnection = 'mysql:host='.$this->sServer.';dbname='.$this->sDatabase.';charset='.$this->sCharset;
-	    $this->oConnection = new PDO($sConnection, $this->sUser, $this->sPassword);
+	    
+	    $this->connectPDO($sConnection);
+	}
+
+	/*SQLite PDO*/
+	/*
+	*/
+	private function connectSQLitePDO(){
+		$sConnection = 'sqlite:'.$this->sSQLitePath;
+	    
+	    $this->connectPDO($sConnection);
+	}
+
+	/*PDO*/
+	/*
+	*/
+	private function connectPDO($sConnection){
+		$this->oConnection = new PDO($sConnection, $this->sUser, $this->sPassword);
 
 		$this->oConnection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 		$this->oConnection->beginTransaction();
 	}
 
-	/*
-	*/
-	private function runMySQLPDO($sQuery){
-		$this->runPDO($sQuery);
-	}
-
-	/*
-	*/
-	private function queryArrayMySQLPDO($sQuery){
-		$this->queryArrayPDO($sQuery);
-	}
-
-	/*
-	*/
-	private function queryRowMySQLPDO($sQuery){
-		$this->queryRowPDO($sQuery);
-	}
-
-	/*
-	*/
-	private function commitMySQLPDO(){
-		$this->commitPDO();
-	}
-
-	/*
-	*/
-	private function rollbackMySQLPDO(){
-		$this->rollbackPDO();
-	}
-
-	/*
-	*/
-	private function closeMySQLPDO(){
-		$this->closePDO();
-	}
-
-	/*
-	*/
-	private function getIDInsertMySQLPDO(){
-		return $this->getIDInsertPDO();
-	}
-
-	/*PDO*/
 	/*
 	*/
 	private function runPDO($sQuery){
