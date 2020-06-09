@@ -1,16 +1,18 @@
-# Data Base Connection
+**Excuses:** ___I apologize for the English used, my language is Spanish.___
 
-### Dependencies:
+# Data Base Connection #
 
-<ol>
-	<li>XAMPP (https://www.apachefriends.org/es/index.html)</li>
-	<li>Clone this repository in the folder used by Apache (included in XAMPP). This folder is located in ".../xampp/htdocs" or in the path that I installed XAMPP.</li>
-	<li>Execute "composer install", in the root of the project.</li>
-</ol>
+## Content ##
 
-### Starting:
+1. [Introduction.](#Introduction "Introduction")
+2. [Dependencies.](#Dependencies "Dependencies")
 
-<ol>
-	<li>Start Apache in the XAMPP control panel.</li>
-	<li>Go to "http://localhost/connectiondb" in the browser.</li>
-</ol>
+<span id="Introduction"></span>
+## Introduction ##
+
+This project aims to create a connection to various database engines like MySQL or SQLite.
+
+<span id="Dependencies"></span>
+## Dependencies ##
+
+- XAMPP (https://www.apachefriends.org/es/index.html).
