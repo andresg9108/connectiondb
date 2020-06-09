@@ -22,34 +22,84 @@ This project aims to create a connection to various database engines like MySQL 
 <span id="Starting"></span>
 ## Starting ##
 
-Start by creating a folder called "example" in the path we want for our example project. Then we will run the following command, which will create a "composer.json" file.
+Start by creating a folder called "example" in the path we want for our example project. Then we will execute the following command, using the console of your operating system and stopped in the "example" folder, that will create a "composer.json" file following the instructions given by the console.
 
 ***composer init***
 
-Now we are going to edit the file "composer.json" adding the array "repositories": [...], like this:
+Then we will add the project dependency "andresg9108/connectiondb", using the following command:
 
-**File: ../example/composer.json**
+***composer require andresg9108/connectiondb***
+
+Now we will open the "XAMPP Control Panel" and give "Start" to "Apache" and "MySQL". Enter the "PhpMyAdmin" which can normally be entered using the URL "http://localhost/phpmyadmin", we will create a new database called "example" and run the following script.
 
 ~~~
-{
-    "name": "example/example",
-    "license": "MIT",
-    "authors": [
-        {
-            "name": "Andres Gonzalez"
-        }
-    ],
-    "require": {
-    },
-    "repositories": [
-	    {
-	        "type": "vcs",
-	    	"url": "https://github.com/andresg9108/connectiondb"
-		}
-	]
+CREATE TABLE example(
+id int NOT NULL AUTO_INCREMENT, 
+name VARCHAR(200), 
+last VARCHAR(200), 
+phone VARCHAR(200),
+PRIMARY KEY(id)
+);
+~~~
+
+This will create the "example" table that will serve to test this project.
+
+Now we will create a new file called "test.php" inside the "example" folder and we will add the following code:
+
+**File: ../example/test.php**
+
+~~~
+<?php
+
+const __DIRMAIN__ = "./";
+require_once __DIRMAIN__.'vendor/autoload.php';
+
+use andresg9108\connectiondb\connection;
+
+try {
+	$aConnection = [
+		'motor' => 'mysql', // mysql OR mysqlpdo OR sqlitepdo
+		'server' => 'localhost', 
+		'charset' => 'utf8', 
+		'user' => 'root', 
+		'password' => '', 
+		'database' => 'example', 
+		'sqlitepath' => ''
+	];
+	$oAConnection = (object)$aConnection;
+
+	$oConnection = connection::getInstance($oAConnection);
+	$oConnection->connect();
+
+	$oConnection->run("INSERT INTO `example`(`name`, `last`, `phone`) VALUES ('Pepito', 'Peña', '123');");
+
+	echo "ID: ". $oConnection->getIDInsert();
+
+	$oConnection->commit();
+	$oConnection->close();
+} catch (Exception $e) {
+	$oConnection->rollback();
+	$oConnection->close();
+
+	echo "Error: ".$e->getMessage();
 }
 ~~~
 
-With this we are indicating to the project in which repository the "andresg9108/connectiondb" project is located and we are ready to execute the following command, using the console of its operating system and standing in the "example" folder.
+We go to our browser and enter the following URL "http: //localhost/example/test.php". If everything goes well, we will show the ID of the file that was inserted and if we go back to "PhpMyAdmin", the "example" table should already have a new record.
 
-***composer require andresg9108/connectiondb***
+The object "$ oConnection" is the most relevant of the file "test.php", so it deserves the following explanation:
+
+1. "$oConnection = connection::getInstance($oAConnection);": You can see how the object is created from the connection object ($ oAConnection) that you established in previous lines.
+2. "$oConnection->connect();": The connection to the database is established.
+3. "$oConnection->run("SQL");": An SQL statement is executed, in this case insert.
+4. "$oConnection->getIDInsert();": Returns the ID of the inserted record.
+5. "$oConnection->commit();": Commits the transaction.
+6. "$oConnection->close();": Close the connection to the database.
+7. "$oConnection->rollback();": In case of error it reverts the entire transaction
+
+You can also use the following functions of the "$oConnection" object, which could replace a "$oConnection->run()" in this example:
+
+1. "$oConnection->multiRun("SQL");": Execute multiple lines of SQL code.
+2. "$oConnection->getQuery();": Returns the result of an SQL query.
+3. "$oConnection->queryArray("SQL")": Executes an SQL query that returns a set of rows. The result can be obtained with "$oConnection->getQuery();".
+4. "$oConnection->queryRow("SQL")": Executes an SQL query that returns a row. The result can be obtained with "$oConnection->getQuery();".
