@@ -6,5 +6,10 @@
         {
             "name": "Andres Gonzalez"
         }
-    ]
+    ],
+    "autoload": {
+    	"psr-4": {
+    		"andresg9108\\connectiondb\\": "connection/"
+    	}
+    }
 }
